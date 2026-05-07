@@ -26,7 +26,11 @@ const PORT = process.env.PORT || 8000;
 // 1. CORS Configuration: Allows your Next.js frontend to talk to this API
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://192.168.31.116:3000"], // Replace with your Next.js URL
+    origin: [
+      "http://localhost:3000",
+      "http://192.168.31.116:3000",
+      "https://college-wise.onrender.com",
+    ], // Replace with your Next.js URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
