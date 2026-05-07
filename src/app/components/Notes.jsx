@@ -31,7 +31,6 @@ const NotesPage = () => {
     );
     const data = await res.json();
     setNotes(data.notes);
-    console.log(data.notes);
   }
   async function handleDownload(noteID) {
     const res = await fetch(

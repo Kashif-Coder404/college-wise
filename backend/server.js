@@ -6,6 +6,7 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import Notes from "./models/Notes.js";
 const mongouri = process.env.MONGO_DB;
+
 const admin = process.env.ADMIN_USER;
 const adminPass = process.env.ADMIN_PASS;
 
