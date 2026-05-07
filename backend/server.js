@@ -29,7 +29,8 @@ app.use(
     origin: [
       "http://localhost:3000",
       "http://192.168.31.116:3000",
-      "https://college-wise.vercel.app/",
+      "https://college-wise.vercel.app",
+      "https://college-wise.netlify.app",
     ], // Replace with your Next.js URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
