@@ -5,10 +5,10 @@ import { AppContext } from "../context/Context";
 import { useRouter } from "next/navigation";
 
 const LandingPage = () => {
-  const { user } = useContext(AppContext);
+  const { user, loading } = useContext(AppContext);
   const router = useRouter();
   useEffect(() => {
-    if (user) {
+    if (user && !loading) {
       router.replace("/dashboard");
     }
   });

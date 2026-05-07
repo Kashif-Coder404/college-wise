@@ -7,35 +7,30 @@ import Filter from "./Filter";
 
 const NotesPage = () => {
   const router = useRouter();
-  const { user, loading, subjects } = useContext(AppContext);
-  useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/login");
-    }
-  }, []);
+  const { user, loading, API } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [notes, setNotes] = useState([]);
   const [filters, setFilter] = useState({
     semester: "",
     unit: "",
     subject: "",
   });
-  const [notes, setNotes] = useState([]);
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/login");
+    }
+  }, []);
   useEffect(() => {
     fetchNotes();
   }, []);
 
   async function fetchNotes(search = "") {
-    const res = await fetch(
-      `http://192.168.31.116:8000/notes?search=${search}`,
-    );
+    const res = await fetch(`${API}/notes?search=${search}`);
     const data = await res.json();
     setNotes(data.notes);
   }
   async function handleDownload(noteID) {
-    const res = await fetch(
-      `http://192.168.31.116:8000/notes/download?id=${noteID}`,
-    );
+    const res = await fetch(`${API}/notes/download?id=${noteID}`);
     const data = await res.json();
     setNotes((prevNotes) =>
       prevNotes.map((note) =>
@@ -49,7 +44,7 @@ const NotesPage = () => {
   }, [filters]);
   async function handleFilter() {
     try {
-      const res = await fetch(`http://192.168.31.116:8000/notes/filter`, {
+      const res = await fetch(`${API}/notes/filter`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

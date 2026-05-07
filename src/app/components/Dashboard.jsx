@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/Context";
 
 const Dashboard = () => {
-  const { user } = useContext(AppContext);
+  const { user, API } = useContext(AppContext);
 
   const router = useRouter();
 
@@ -32,7 +32,7 @@ const Dashboard = () => {
 
   async function fetchLatestNotes() {
     try {
-      const res = await fetch("http://192.168.31.116:8000/notes/latest");
+      const res = await fetch(`${API}/notes/latest`);
 
       const data = await res.json();
 
@@ -50,9 +50,7 @@ const Dashboard = () => {
 
   async function handleDownload(noteID) {
     try {
-      const res = await fetch(
-        `http://localhost:8000/notes/download?id=${noteID}`,
-      );
+      const res = await fetch(`${API}/notes/download?id=${noteID}`);
 
       const data = await res.json();
 

@@ -7,7 +7,7 @@ import { AppContext } from "../context/Context";
 
 const Signup = () => {
   const router = useRouter();
-  const { setUser } = useContext(AppContext);
+  const { setUser, API } = useContext(AppContext);
   const [alertClr, setAlertClr] = useState("red");
   const [aler, setAlert] = useState("");
   const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ const Signup = () => {
     // This will connect to your FastAPI /api/signup endpoint
 
     try {
-      const res = await fetch("http://192.168.31.116:8000/signup", {
+      const res = await fetch(`${API}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

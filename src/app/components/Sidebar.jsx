@@ -4,6 +4,7 @@ import React, { useContext } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AppContext } from "../context/Context";
+import "dotenv/config";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const { user } = useContext(AppContext);
@@ -12,8 +13,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const navLinks = [
     { name: "Dashboard", href: "/dashboard", emoji: "🏠" },
     { name: "All Notes", href: "/notes", emoji: "📚" },
-    { name: "Practicals", href: "/practicals", emoji: "💻" },
-    { name: "Date Sheet", href: "/events", emoji: "📅" },
+    // { name: "Practicals", href: "/practicals", emoji: "💻" },
+    // { name: "Date Sheet", href: "/events", emoji: "📅" },
   ];
 
   return (

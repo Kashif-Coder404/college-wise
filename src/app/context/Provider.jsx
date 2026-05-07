@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { AppContext } from "./Context";
 import NavBar from "../components/NavBar";
+import "dotenv/config";
 
 export default function AppProvider({ children }) {
+  const API = process.env.NEXT_PUBLIC_API;
   const [user, setUser] = useState(null);
   // const [subjects,setSubject] = useState([])
   const subjects = [
@@ -67,7 +69,7 @@ export default function AppProvider({ children }) {
     setLoading(false);
   }, []);
   return (
-    <AppContext.Provider value={{ user, setUser, loading, subjects }}>
+    <AppContext.Provider value={{ user, setUser, loading, subjects, API }}>
       <NavBar collegeName={"ITM"} />
       {children}
     </AppContext.Provider>

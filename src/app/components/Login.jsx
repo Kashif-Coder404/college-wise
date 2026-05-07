@@ -10,12 +10,12 @@ const Login = () => {
   const [alert, setAlert] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setUser } = useContext(AppContext);
+  const { setUser, API } = useContext(AppContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://192.168.31.116:8000/login", {
+      const res = await fetch(`${API}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

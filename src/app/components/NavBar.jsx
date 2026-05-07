@@ -7,7 +7,7 @@ import Sidebar from "./Sidebar";
 import { usePathname, useRouter } from "next/navigation";
 
 const NavBar = ({ collegeName }) => {
-  const { user, setUser } = useContext(AppContext);
+  const { user, setUser} = useContext(AppContext);
   const router = useRouter();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 

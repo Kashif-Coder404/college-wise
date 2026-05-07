@@ -8,7 +8,7 @@ import { AppContext } from "../context/Context";
 const AdminPanel = () => {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const { subjects } = useContext(AppContext);
+  const { subjects, API } = useContext(AppContext);
   const [notes, setNotes] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -42,7 +42,7 @@ const AdminPanel = () => {
     try {
       const token = localStorage.getItem("adminToken");
 
-      const res = await fetch("http://localhost:8000/admin/notes", {
+      const res = await fetch(`${API}/admin/notes`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -75,7 +75,7 @@ const AdminPanel = () => {
     try {
       const token = localStorage.getItem("adminToken");
 
-      const res = await fetch("http://localhost:8000/admin/notes", {
+      const res = await fetch(`${API}/admin/notes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +116,7 @@ const AdminPanel = () => {
     try {
       const token = localStorage.getItem("adminToken");
 
-      await fetch(`http://localhost:8000/admin/notes/${id}`, {
+      await fetch(`${API}/admin/notes/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

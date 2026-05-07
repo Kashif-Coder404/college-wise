@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AppContext } from "../context/Context";
 
 const AdminLoginPage = () => {
+  const { API } = useContext(AppContext);
   const router = useRouter();
   const [alert, setAlert] = useState("");
 
@@ -23,7 +25,7 @@ const AdminLoginPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8000/admin/login", {
+      const res = await fetch(`${API}/admin/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
