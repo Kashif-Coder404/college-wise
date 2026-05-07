@@ -6,6 +6,8 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import Notes from "./models/Notes.js";
 const mongouri = process.env.MONGO_DB;
+const admin = process.env.ADMIN_USER;
+const adminPass = process.env.ADMIN_PASS;
 
 mongoose
   .connect(mongouri)
@@ -161,7 +163,7 @@ app.get("/notes/latest", async (req, res) => {
 app.post("/admin/login", (req, res) => {
   const { username, password } = req.body;
 
-  if (username === "admin" && password === "1234") {
+  if (username === admin && password === adminPass) {
     return res.json({
       token: "admin-token",
     });
