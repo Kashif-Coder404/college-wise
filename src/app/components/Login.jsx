@@ -1,0 +1,153 @@
+"use client"; // Required for handling form state in Next.js
+
+import React, { useContext, useState } from "react";
+import Link from "next/link";
+import { AppContext } from "../context/Context";
+import { useRouter } from "next/navigation";
+
+const Login = () => {
+  const router = useRouter();
+  const [alert, setAlert] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { setUser } = useContext(AppContext);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://192.168.31.116:8000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email, password: password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setAlert(data.message || "Login failed!");
+      } else {
+        setAlert(data.message || "Successfully Logined"); // clear error
+        setUser(data.user.fullName);
+        localStorage.setItem("user", data.user.fullName);
+        router.replace("./dashboard");
+        console.log("Response after signup: ", data);
+      }
+    } catch (err) {
+      setAlert("Server error. Please try again.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
+        {/* Header */}
+        {alert && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg text-sm">
+            {alert}
+          </div>
+        )}
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4 shadow-lg shadow-blue-200">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 14l9-5-9-5-9 5 9 5z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Welcome Back
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Log in to access your college notes and schedules.
+          </p>
+        </div>
+
+        {/* Form */}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                required
+                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="you@university.edu"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                type="password"
+                required
+                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label className="ml-2 block text-gray-900">Remember me</label>
+            </div>
+            <Link
+              href="/forgot-password"
+              weight="medium"
+              className="text-blue-600 hover:text-blue-500"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
+          <button
+            type="submit"
+            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all active:scale-95"
+          >
+            Sign In
+          </button>
+        </form>
+
+        {/* Footer */}
+        <p className="text-center text-sm text-gray-600">
+          Don't have an account?{" "}
+          <Link
+            href="/signup"
+            className="font-bold text-blue-600 hover:text-blue-500"
+          >
+            Create an Account
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
