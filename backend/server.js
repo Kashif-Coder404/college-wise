@@ -63,7 +63,6 @@ app.get("/notes/download", async (req, res) => {
 
     // SAVE in database
     await toDownload.save();
-    console.log(toDownload.downloads);
     res.status(200).json({
       success: true,
       downloadLink: toDownload.downloadLink,
@@ -189,8 +188,6 @@ app.post("/admin/notes", async (req, res) => {
       return res.status(400).json({ message: "Note Already Exists" });
     }
     const newNote = await Notes.create(noteData);
-
-    console.log("Note has been created: ", newNote);
     res.status(200).json({ createdNote: newNote });
   } catch (err) {
     console.log(err);
@@ -200,7 +197,6 @@ app.post("/admin/notes", async (req, res) => {
 app.get("/admin/notes", async (req, res) => {
   const noteData = await Notes.find();
   try {
-    console.log(noteData);
     res.status(200).json({ notes: noteData });
   } catch (err) {
     console.log(err);
@@ -210,12 +206,12 @@ app.get("/admin/notes", async (req, res) => {
 app.delete("/admin/notes/:id", async (req, res) => {
   try {
     const noteID = req.params.id;
-    console.log("NoteID", noteID);
+
     if (!noteID) {
       return res.status(500).json({ message: "ID Error" });
     }
     const doc = await Notes.deleteOne({ _id: noteID });
-    console.log(doc);
+
     res.status(200).json({ message: "Deletion Successfull" });
   } catch (error) {
     console.log("Error:", err.message);
@@ -226,7 +222,6 @@ app.delete("/admin/notes/:id", async (req, res) => {
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Login attempt for:", email);
 
     // 1. Check if user exists
     const user = await User.findOne({ email });
@@ -265,7 +260,7 @@ app.post("/login", async (req, res) => {
 app.post("/signup", async (req, res) => {
   try {
     const { fullName, email, password, course, semester } = req.body;
-    console.log(`Sign up for : `, email);
+
     const isExist = await User.findOne({ email });
     if (isExist)
       return res
