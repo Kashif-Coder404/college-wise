@@ -1,31 +1,43 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
+dotenv.config();
 
-const sendBrevoEmail = async (toEmail, subject, htmlContent) => {
-  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+const sendEmailJS = async (toEmail, subject, htmlContent) => {
+  const serviceId = process.env.EMAILJS_SERVICE_ID;
+  const templateId = process.env.EMAILJS_TEMPLATE_ID;
+  const publicKey = process.env.EMAILJS_PUBLIC_KEY;
+  const privateKey = process.env.EMAILJS_PRIVATE_KEY;
+
+  if (!serviceId || !templateId || !publicKey || !privateKey) {
+    console.log("EmailJS keys are missing in .env");
+    return;
+  }
+
+  const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
     method: "POST",
     headers: {
-      "api-key": process.env.BREVO_API_KEY,
       "Content-Type": "application/json",
-      Accept: "application/json",
     },
     body: JSON.stringify({
-      sender: {
-        name: "CollegeWise",
-        email: process.env.EMAIL || "collegewise100@gmail.com",
+      service_id: serviceId,
+      template_id: templateId,
+      user_id: publicKey,
+      accessToken: privateKey,
+      template_params: {
+        to_email: toEmail,
+        subject: subject,
+        html_content: htmlContent,
       },
-      to: [{ email: toEmail }],
-      subject: subject,
-      htmlContent: htmlContent,
     }),
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to send email via Brevo");
+    const errorText = await response.text();
+    throw new Error(`EmailJS Error Message: ${errorText || "Failed to send email via EmailJS"}`);
   }
-  return await response.json();
+  return response.text();
 };
 
 // Signup Controller
@@ -43,7 +55,7 @@ export const signupUser = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    await sendBrevoEmail(
+    await sendEmailJS(
       email,
       "Verification OTP - CollegeWise",
       `
@@ -58,7 +70,7 @@ export const signupUser = async (req, res) => {
           <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
           <p style="font-size: 12px; color: #888; text-align: center;">This is an automated email. Please do not reply.</p>
         </div>
-      `
+      `,
     );
 
     const signupToken = jwt.sign(
@@ -154,11 +166,11 @@ export const forgotPassword = async (req, res) => {
         expiresIn: "1h",
       },
     );
-    
+
     const origin = req.headers.origin || "http://localhost:3000";
     const resetUrl = `${origin}/reset-password?token=${token}`;
 
-    await sendBrevoEmail(
+    await sendEmailJS(
       user.email,
       "Password Reset Request - CollegeWise",
       `
@@ -175,7 +187,7 @@ export const forgotPassword = async (req, res) => {
           <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
           <p style="font-size: 12px; color: #888; text-align: center;">This is an automated email. Please do not reply.</p>
         </div>
-      `
+      `,
     );
 
     res.status(200).json({
