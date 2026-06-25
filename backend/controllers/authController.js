@@ -65,6 +65,7 @@ export const signupUser = async (req, res) => {
       message: "Verification OTP sent to your email successfully",
     });
   } catch (error) {
+    console.error("Error in signupUser:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -179,6 +180,7 @@ export const forgotPassword = async (req, res) => {
       message: "Reset link sent to your email successfully",
     });
   } catch (error) {
+    console.error("Error in forgotPassword:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -231,6 +233,7 @@ export const resetPassword = async (req, res) => {
       message: "Password reset successfully",
     });
   } catch (error) {
+    console.error("Error in resetPassword:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -316,6 +319,7 @@ export const verifySignupOTP = async (req, res) => {
       message: "Account verified and registered successfully!",
     });
   } catch (error) {
+    console.error("Error in verifySignupOTP:", error);
     res.status(500).json({
       success: false,
       message: error.message,
