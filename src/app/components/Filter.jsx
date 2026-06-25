@@ -53,10 +53,8 @@ const Filter = ({ setFilter, filters, notes }) => {
             >
               <option value={""}>All Subjects</option>
               {sortedSubjects.map((subject) => {
-                const code = subject.match(/\((.*?)\)/)?.[1];
-
                 return (
-                  <option key={code} value={code}>
+                  <option key={subject} value={subject}>
                     {subject}
                   </option>
                 );

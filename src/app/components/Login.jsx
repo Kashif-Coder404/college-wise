@@ -9,13 +9,14 @@ const Login = () => {
   const router = useRouter();
   const [alert, setAlert] = useState("");
   const [email, setEmail] = useState("");
+  const [showPass, setShowPass] = useState(false);
   const [password, setPassword] = useState("");
   const { setUser, API } = useContext(AppContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API}/login`, {
+      const res = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,14 +100,29 @@ const Login = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
-              <input
-                type="password"
-                required
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+
+              {/* 1. Wrapper specifically for the input and icon */}
+              <div className="relative">
+                <input
+                  type={showPass ? "text" : "password"}
+                  required
+                  /* 2. Removed 'relative' from here, added 'pr-12' to prevent text overlapping the icon */
+                  className="appearance-none block w-full px-4 py-3 pr-12 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+
+                {/* 3. Replaced translate classes with standard vertical centering and right-alignment */}
+                <div
+                  onClick={() => setShowPass(!showPass)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer text-gray-500 hover:text-gray-700"
+                >
+                  <span className="material-symbols-outlined">
+                    {showPass ? "visibility_off" : "visibility"}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 

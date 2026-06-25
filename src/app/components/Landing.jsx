@@ -8,10 +8,14 @@ const LandingPage = () => {
   const { user, loading } = useContext(AppContext);
   const router = useRouter();
   useEffect(() => {
-    if (user && !loading) {
-      router.replace("/dashboard");
+    if (!loading) {
+      if (user) {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/login");
+      }
     }
-  });
+  }, [user, loading, router]);
 
   return (
     <div className="bg-white text-gray-900">

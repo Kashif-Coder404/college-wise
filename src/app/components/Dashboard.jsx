@@ -17,7 +17,7 @@ const Dashboard = () => {
   // -----------------------------------
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !loading) {
       router.replace("/login");
     }
   }, [user, router]);
@@ -32,7 +32,7 @@ const Dashboard = () => {
 
   async function fetchLatestNotes() {
     try {
-      const res = await fetch(`${API}/notes/latest`);
+      const res = await fetch(`${API}/api/notes/latest`);
 
       const data = await res.json();
 
@@ -50,7 +50,7 @@ const Dashboard = () => {
 
   async function handleDownload(noteID) {
     try {
-      const res = await fetch(`${API}/notes/download?id=${noteID}`);
+      const res = await fetch(`${API}/api/notes/download?id=${noteID}`);
 
       const data = await res.json();
 
