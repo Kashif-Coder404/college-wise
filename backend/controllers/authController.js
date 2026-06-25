@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
+import dns from "dns";
 // Signup Controller
 export const signupUser = async (req, res) => {
   try {
@@ -25,7 +26,9 @@ export const signupUser = async (req, res) => {
         user: process.env.EMAIL,
         pass: process.env.APP_PASSWORD,
       },
-      family: 4,
+      lookup: (hostname, options, callback) => {
+        return dns.lookup(hostname, { family: 4 }, callback);
+      },
       connectionTimeout: 10000,
       greetingTimeout: 10000,
       socketTimeout: 10000,
@@ -155,7 +158,9 @@ export const forgotPassword = async (req, res) => {
         user: process.env.EMAIL,
         pass: process.env.APP_PASSWORD,
       },
-      family: 4,
+      lookup: (hostname, options, callback) => {
+        return dns.lookup(hostname, { family: 4 }, callback);
+      },
       connectionTimeout: 10000,
       greetingTimeout: 10000,
       socketTimeout: 10000,
