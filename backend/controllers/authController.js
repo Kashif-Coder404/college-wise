@@ -1,8 +1,33 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import nodemailer from "nodemailer";
-import dns from "dns";
+
+const sendBrevoEmail = async (toEmail, subject, htmlContent) => {
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": process.env.BREVO_API_KEY,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      sender: {
+        name: "CollegeWise",
+        email: process.env.EMAIL || "collegewise100@gmail.com",
+      },
+      to: [{ email: toEmail }],
+      subject: subject,
+      htmlContent: htmlContent,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to send email via Brevo");
+  }
+  return await response.json();
+};
+
 // Signup Controller
 export const signupUser = async (req, res) => {
   try {
@@ -18,27 +43,10 @@ export const signupUser = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.APP_PASSWORD,
-      },
-      lookup: (hostname, options, callback) => {
-        return dns.lookup(hostname, { family: 4 }, callback);
-      },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
-    });
-
-    const mailOptions = {
-      from: `"CollegeWise" <${process.env.EMAIL}>`,
-      to: email,
-      subject: "Verification OTP - CollegeWise",
-      html: `
+    await sendBrevoEmail(
+      email,
+      "Verification OTP - CollegeWise",
+      `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px;">
           <h2 style="color: #2563eb; text-align: center;">CollegeWise Account Verification</h2>
           <p>Hello ${fullName},</p>
@@ -50,10 +58,8 @@ export const signupUser = async (req, res) => {
           <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
           <p style="font-size: 12px; color: #888; text-align: center;">This is an automated email. Please do not reply.</p>
         </div>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
+      `
+    );
 
     const signupToken = jwt.sign(
       {
@@ -74,7 +80,6 @@ export const signupUser = async (req, res) => {
       message: "Verification OTP sent to your email successfully",
     });
   } catch (error) {
-    console.error("Error in signupUser:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -149,31 +154,14 @@ export const forgotPassword = async (req, res) => {
         expiresIn: "1h",
       },
     );
-
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.APP_PASSWORD,
-      },
-      lookup: (hostname, options, callback) => {
-        return dns.lookup(hostname, { family: 4 }, callback);
-      },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 10000,
-    });
-
+    
     const origin = req.headers.origin || "http://localhost:3000";
     const resetUrl = `${origin}/reset-password?token=${token}`;
 
-    const mailOptions = {
-      from: `"CollegeWise" <${process.env.EMAIL}>`,
-      to: user.email,
-      subject: "Password Reset Request - CollegeWise",
-      html: `
+    await sendBrevoEmail(
+      user.email,
+      "Password Reset Request - CollegeWise",
+      `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px;">
           <h2 style="color: #2563eb; text-align: center;">CollegeWise Password Reset</h2>
           <p>Hello ${user.fullName},</p>
@@ -187,17 +175,14 @@ export const forgotPassword = async (req, res) => {
           <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
           <p style="font-size: 12px; color: #888; text-align: center;">This is an automated email. Please do not reply.</p>
         </div>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
+      `
+    );
 
     res.status(200).json({
       success: true,
       message: "Reset link sent to your email successfully",
     });
   } catch (error) {
-    console.error("Error in forgotPassword:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -250,7 +235,6 @@ export const resetPassword = async (req, res) => {
       message: "Password reset successfully",
     });
   } catch (error) {
-    console.error("Error in resetPassword:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -336,7 +320,6 @@ export const verifySignupOTP = async (req, res) => {
       message: "Account verified and registered successfully!",
     });
   } catch (error) {
-    console.error("Error in verifySignupOTP:", error);
     res.status(500).json({
       success: false,
       message: error.message,
