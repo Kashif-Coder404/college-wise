@@ -23,6 +23,9 @@ export const signupUser = async (req, res) => {
         user: process.env.EMAIL,
         pass: process.env.APP_PASSWORD,
       },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
 
     const mailOptions = {
@@ -147,6 +150,9 @@ export const forgotPassword = async (req, res) => {
         user: process.env.EMAIL,
         pass: process.env.APP_PASSWORD,
       },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
 
     const origin = req.headers.origin || "http://localhost:3000";
