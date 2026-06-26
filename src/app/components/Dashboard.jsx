@@ -17,7 +17,6 @@ const Dashboard = () => {
   // -----------------------------------
 
   useEffect(() => {
-    console.log("User and authLoading", user, authLoading);
     if (!authLoading && !user) {
       router.replace("/login");
     }

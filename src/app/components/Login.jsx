@@ -10,6 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const { setUser, API, user } = useContext(AppContext);
 
   useEffect(() => {
@@ -36,10 +37,10 @@ const Login = () => {
       } else {
         setAlert(data.message || "Successfully Logined"); // clear error
         setUser(data.user.fullName);
-        localStorage.setItem("user", data.user.fullName);
-        localStorage.setItem("token", data.token);
+        const storage = rememberMe ? localStorage : sessionStorage;
+        storage.setItem("user", data.user.fullName);
+        storage.setItem("token", data.token);
         router.replace("./dashboard");
-        console.log("Response after signup: ", data);
       }
     } catch (err) {
       setAlert("Server error. Please try again.");
@@ -136,6 +137,8 @@ const Login = () => {
             <div className="flex items-center">
               <input
                 type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label className="ml-2 block text-gray-900">Remember me</label>

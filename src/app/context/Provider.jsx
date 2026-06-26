@@ -64,7 +64,7 @@ export default function AppProvider({ children }) {
   ];
   const [authLoading, setAuthLoading] = useState(true);
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
+    const savedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
     if (savedUser) {
       setUser(savedUser);
     }
@@ -73,6 +73,8 @@ export default function AppProvider({ children }) {
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
     setUser(null);
     router.push("/login");
   };

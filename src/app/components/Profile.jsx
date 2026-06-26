@@ -22,7 +22,7 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token"); 
     if (!token) {
       router.replace("/login");
       return;
@@ -63,7 +63,7 @@ const Profile = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
       const payload = {
         ...formData,
         skills: formData.skills.split(",").map(s => s.trim()).filter(s => s),
@@ -84,7 +84,12 @@ const Profile = () => {
       if (!res.ok) return alert(data.message);
       
       if (data.user.fullName) {
-        localStorage.setItem("user", data.user.fullName);
+        if (localStorage.getItem("user")) {
+          localStorage.setItem("user", data.user.fullName);
+        }
+        if (sessionStorage.getItem("user")) {
+          sessionStorage.setItem("user", data.user.fullName);
+        }
       }
       
       alert("Profile updated successfully!");
