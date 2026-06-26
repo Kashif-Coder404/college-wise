@@ -1,17 +1,22 @@
 "use client"; // Required for handling form state in Next.js
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { AppContext } from "../context/Context";
-import { useRouter } from "next/navigation";
-
+import { useRouter } from "next/navigation"; 
 const Login = () => {
   const router = useRouter();
   const [alert, setAlert] = useState("");
   const [email, setEmail] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [password, setPassword] = useState("");
-  const { setUser, API } = useContext(AppContext);
+  const { setUser, API, user } = useContext(AppContext);
+
+  useEffect(() => {
+    if (user) {
+      router.replace("./dashboard");
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +37,7 @@ const Login = () => {
         setAlert(data.message || "Successfully Logined"); // clear error
         setUser(data.user.fullName);
         localStorage.setItem("user", data.user.fullName);
+        localStorage.setItem("token", data.token);
         router.replace("./dashboard");
         console.log("Response after signup: ", data);
       }

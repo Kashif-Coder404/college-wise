@@ -5,17 +5,15 @@ import { AppContext } from "../context/Context";
 import { useRouter } from "next/navigation";
 
 const LandingPage = () => {
-  const { user, loading } = useContext(AppContext);
+  const { user, authLoading } = useContext(AppContext);
   const router = useRouter();
   useEffect(() => {
-    if (!loading) {
+    if (!authLoading) {
       if (user) {
         router.replace("/dashboard");
-      } else {
-        router.replace("/login");
       }
     }
-  }, [user, loading, router]);
+  }, [user, authLoading, router]);
 
   return (
     <div className="bg-white text-gray-900">

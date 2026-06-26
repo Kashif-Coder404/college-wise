@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AppContext } from "./Context";
 import NavBar from "../components/NavBar";
 import "dotenv/config";
 
 export default function AppProvider({ children }) {
+  const router = useRouter();
   const API = process.env.NEXT_PUBLIC_API;
   const [user, setUser] = useState(null);
   // const [subjects,setSubject] = useState([])
@@ -60,16 +62,24 @@ export default function AppProvider({ children }) {
     "Blockchain Technology (BT)",
     "Wireless and Mobile Computing (WMC)",
   ];
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(savedUser);
     }
-    setLoading(false);
+    setAuthLoading(false);
   }, []);
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setUser(null);
+    router.push("/login");
+  };
   return (
-    <AppContext.Provider value={{ user, setUser, loading, subjects, API }}>
+    <AppContext.Provider
+      value={{ logout, user, setUser, loading: authLoading, authLoading, subjects, API }}
+    >
       <NavBar collegeName={"ITM"} />
       {children}
     </AppContext.Provider>

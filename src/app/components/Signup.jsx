@@ -83,6 +83,7 @@ const Signup = () => {
         setAlert("Account verified successfully! Redirecting...");
         setUser(data.user.fullName);
         localStorage.setItem("user", data.user.fullName);
+        localStorage.setItem("token", data.token);
         router.replace("./dashboard");
       }
     } catch (err) {

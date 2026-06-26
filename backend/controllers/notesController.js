@@ -12,11 +12,8 @@ export const downloadNote = async (req, res) => {
       });
     }
 
-    // Increase downloads
-    // toDownload.downloads = Number(toDownload.downloads) + 1;
-
-    // SAVE in database
-    // await toDownload.save();
+    toDownload.downloads = Number(toDownload.downloads) + 1;
+    await toDownload.save();
     res.status(200).json({
       success: true,
       downloadLink: toDownload.downloadLink,
@@ -151,5 +148,75 @@ export const filterNotes = async (req, res) => {
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const uploadNote = async (req, res) => {
+  try {
+    const {
+      title,
+      subject,
+      unit,
+      semester,
+      teacherName,
+      downloadLink,
+      viewLink,
+      type,
+    } = req.body;
+
+    const existingNote = await Notes.findOne({ title });
+    if (existingNote) {
+      return res.status(400).json({
+        success: false,
+        message: "A note with this title already exists.",
+      });
+    }
+
+    const newNote = await Notes.create({
+      title,
+      subject,
+      unit,
+      semester,
+      teacherName,
+      downloadLink,
+      viewLink,
+      type,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Note uploaded successfully",
+      note: newNote,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+export const deleteNote = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const note = await Notes.findByIdAndDelete(id);
+
+    if (!note) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Note deleted successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };

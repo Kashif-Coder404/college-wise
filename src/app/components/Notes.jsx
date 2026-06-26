@@ -8,7 +8,7 @@ import NoteCard from "./NoteCard";
 
 const NotesPage = () => {
   const router = useRouter();
-  const { user, loading, API } = useContext(AppContext);
+  const { user, authLoading, API } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [notes, setNotes] = useState([]);
   const [allNotes, setAllNotes] = useState([]);
@@ -20,13 +20,15 @@ const NotesPage = () => {
     subject: "",
   });
   useEffect(() => {
-    if (!loading && !user) {
+    if (!authLoading && !user) {
       router.replace("/login");
     }
-  }, []);
+  }, [user, authLoading, router]);
   useEffect(() => {
-    fetchAllNotes();
-  }, []);
+    if (user) {
+      fetchAllNotes();
+    }
+  }, [user]);
 
   async function fetchAllNotes() {
     try {
@@ -66,6 +68,14 @@ const NotesPage = () => {
     } catch (err) {
       console.log("error while filtering: ", err.message);
     }
+  }
+
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
   return (

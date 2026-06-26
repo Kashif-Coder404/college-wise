@@ -5,30 +5,33 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/Context";
 
 const Dashboard = () => {
-  const { user, API } = useContext(AppContext);
+  const { user, authLoading, API, logout } = useContext(AppContext);
 
   const router = useRouter();
 
   const [latestNotes, setLatestNotes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [notesLoading, setNotesLoading] = useState(true);
 
   // -----------------------------------
   // AUTH
   // -----------------------------------
 
   useEffect(() => {
-    if (!user && !loading) {
+    console.log("User and authLoading", user, authLoading);
+    if (!authLoading && !user) {
       router.replace("/login");
     }
-  }, [user, router]);
+  }, [user, authLoading, router]);
 
   // -----------------------------------
   // FETCH LATEST NOTES
   // -----------------------------------
 
   useEffect(() => {
-    fetchLatestNotes();
-  }, []);
+    if (user) {
+      fetchLatestNotes();
+    }
+  }, [user]);
 
   async function fetchLatestNotes() {
     try {
@@ -40,7 +43,7 @@ const Dashboard = () => {
     } catch (err) {
       console.log(err);
     } finally {
-      setLoading(false);
+      setNotesLoading(false);
     }
   }
 
@@ -85,6 +88,14 @@ const Dashboard = () => {
   // UI
   // -----------------------------------
 
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* HEADER */}
@@ -99,9 +110,7 @@ const Dashboard = () => {
 
           <button
             onClick={() => {
-              localStorage.removeItem("user");
-
-              router.replace("/login");
+              logout(); 
             }}
             className="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-2xl font-semibold transition-all"
           >
@@ -162,7 +171,7 @@ const Dashboard = () => {
 
         {/* LOADING */}
 
-        {loading ? (
+        {notesLoading ? (
           <div className="text-center py-24 text-gray-500">
             Loading latest notes...
           </div>

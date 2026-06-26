@@ -7,16 +7,9 @@ import Sidebar from "./Sidebar";
 import { usePathname, useRouter } from "next/navigation";
 
 const NavBar = ({ collegeName }) => {
-  const { user, setUser} = useContext(AppContext);
+  const { user, setUser, logout } = useContext(AppContext);
   const router = useRouter();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-
-  function handleLogout() {
-    setUser("");
-    localStorage.setItem("user", "");
-    console.log("User logout!");
-    router.replace("/login");
-  }
 
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   return (
@@ -71,7 +64,6 @@ const NavBar = ({ collegeName }) => {
             <Link
               href="/"
               className="text-xl font-bold text-gray-900 tracking-tight"
-              onClick={() => handleLogout()}
             >
               CollegeWise
             </Link>
@@ -107,8 +99,16 @@ const NavBar = ({ collegeName }) => {
                     </p>
                   </div>
 
+                  <Link
+                    href="/profile"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="block w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors border-b"
+                  >
+                    My Profile
+                  </Link>
+
                   <button
-                    onClick={handleLogout}
+                    onClick={logout}
                     className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
                   >
                     Logout
@@ -117,12 +117,20 @@ const NavBar = ({ collegeName }) => {
               )}
             </div>
           ) : (
-            <Link
-              href="/login"
-              className="px-6 py-2 bg-blue-600 text-white text-sm font-bold rounded-full hover:bg-blue-700 transition-all shadow-md active:scale-95"
-            >
-              LOGIN
-            </Link>
+            <>
+              <Link
+                href="/signup"
+                className="px-6 py-2 text-black text-sm font-bold rounded-full hover:bg-blue-700 hover:text-white transition-all  active:scale-95"
+              >
+                Signup
+              </Link>
+              <Link
+                href="/login"
+                className="px-6 py-2 bg-blue-600 text-white text-sm font-bold rounded-full hover:bg-blue-700 transition-all shadow-md active:scale-95"
+              >
+                LOGIN
+              </Link>
+            </>
           )}
         </div>
       </nav>

@@ -5,7 +5,11 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   course: { type: String, required: true },
-  semester: { type: String, requireed: true },
+  semester: { type: String, required: true },
+  bio: { type: String, default: "" },
+  github: { type: String, default: "" },
+  linkedin: { type: String, default: "" },
+  skills: { type: [String], default: [] },
   createdAt: { type: Date, default: Date.now },
 });
 
