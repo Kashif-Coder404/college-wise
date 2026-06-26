@@ -7,7 +7,7 @@ import { AppContext } from "../context/Context";
 
 const Signup = () => {
   const router = useRouter();
-  const { setUser, API } = useContext(AppContext);
+  const { setUser, setToken, API } = useContext(AppContext);
   const [alertClr, setAlertClr] = useState("red");
   const [aler, setAlert] = useState("");
   const [formData, setFormData] = useState({
@@ -82,6 +82,7 @@ const Signup = () => {
         setAlertClr("green");
         setAlert("Account verified successfully! Redirecting...");
         setUser(data.user.fullName);
+        setToken(data.token);
         localStorage.setItem("user", data.user.fullName);
         localStorage.setItem("token", data.token);
         router.replace("./dashboard");

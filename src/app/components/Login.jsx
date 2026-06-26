@@ -10,8 +10,8 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const { setUser, API, user } = useContext(AppContext);
+  const [rememberMe, setRememberMe] = useState(true);
+  const { setUser, setToken, API, user } = useContext(AppContext);
 
   useEffect(() => {
     if (user) {
@@ -37,9 +37,11 @@ const Login = () => {
       } else {
         setAlert(data.message || "Successfully Logined"); // clear error
         setUser(data.user.fullName);
-        const storage = rememberMe ? localStorage : sessionStorage;
-        storage.setItem("user", data.user.fullName);
-        storage.setItem("token", data.token);
+        setToken(data.token);
+        if (rememberMe) {
+          localStorage.setItem("user", data.user.fullName);
+          localStorage.setItem("token", data.token);
+        }
         router.replace("./dashboard");
       }
     } catch (err) {

@@ -62,11 +62,14 @@ export default function AppProvider({ children }) {
     "Blockchain Technology (BT)",
     "Wireless and Mobile Computing (WMC)",
   ];
+  const [token, setToken] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   useEffect(() => {
-    const savedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
-    if (savedUser) {
+    const savedUser = localStorage.getItem("user");
+    const savedToken = localStorage.getItem("token");
+    if (savedUser && savedToken) {
       setUser(savedUser);
+      setToken(savedToken);
     }
     setAuthLoading(false);
   }, []);
@@ -76,11 +79,12 @@ export default function AppProvider({ children }) {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("token");
     setUser(null);
+    setToken(null);
     router.push("/login");
   };
   return (
     <AppContext.Provider
-      value={{ logout, user, setUser, loading: authLoading, authLoading, subjects, API }}
+      value={{ logout, user, setUser, token, setToken, loading: authLoading, authLoading, subjects, API }}
     >
       <NavBar collegeName={"ITM"} />
       {children}

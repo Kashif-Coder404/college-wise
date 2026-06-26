@@ -6,7 +6,7 @@ import { AppContext } from "../context/Context";
 
 const Profile = () => {
   const router = useRouter();
-  const { API } = useContext(AppContext);
+  const { token, authLoading, API } = useContext(AppContext);
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -22,14 +22,15 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token"); 
-    if (!token) {
-      router.replace("/login");
-      return;
+    if (!authLoading) {
+      if (!token) {
+        router.replace("/login");
+      } else {
+        setMounted(true);
+        fetchProfile(token);
+      }
     }
-    setMounted(true);
-    fetchProfile(token);
-  }, []);
+  }, [token, authLoading, router]);
 
   async function fetchProfile(token) {
     try {
@@ -63,7 +64,6 @@ const Profile = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
       const payload = {
         ...formData,
         skills: formData.skills.split(",").map(s => s.trim()).filter(s => s),
